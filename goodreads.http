@@ -1,23 +1,12 @@
-###
-
-POST http://localhost:3006/users/
-Content-Type: application/json
-
-{   
-    "name":"rahul",
-    "username":"rahul123",
-    "password": "rahul@456",
-    "gender": "Male",
-    "location":"hyderabad"
-}
-
-
-###
-
-POST http://localhost:3006/login/
-Content-Type: application/json
+POST http://localhost:3007/register
+Content-Type:application/json
 
 {
-    "username":"rahul123",
-    "password": "rahul@456"
+  "username": "adam_richard",
+  "name": "Adam Richard",
+  "password": "richard_567",
+  "gender": "male",
+  "location": "Detroit"
 }
+
+### API 1
