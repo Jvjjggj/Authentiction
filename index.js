@@ -26,6 +26,7 @@ const initializeDBAndServer = async () => {
 };
 initializeDBAndServer();
 
+// API 1
 app.post("/register", async (request, response) => {
   const { username, name, password, gender, location } = request.body;
   const hashedPassword = bcrypt.hash(password, 10);
@@ -50,4 +51,25 @@ app.post("/register", async (request, response) => {
   }
 });
 
+// API 2
+app.post("/login", async (request, response) => {
+  const { username, password } = request.body;
+  const query = `
+  select * from user where
+  username="${username}";`;
+  const dbresponse = await db.get(query);
+  if (dbresponse === undefined) {
+    response.status(400);
+    response.send(" Invalid user");
+  } else {
+    const ispassword = await bcrypt.compare(password, dbresponse.password);
+    if (ispassword === true) {
+      response.status(200);
+      response.send("Login success!");
+    } else {
+      response.status(400);
+      response.send("Invalid password");
+    }
+  }
+});
 module.exports = app;
