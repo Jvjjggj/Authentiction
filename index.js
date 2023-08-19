@@ -16,7 +16,7 @@ const initializeDBAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     });
-    app.listen(3006, () => {
+    app.listen(3007, () => {
       console.log("Server Running at http://localhost:3006/");
     });
   } catch (e) {
@@ -26,41 +26,28 @@ const initializeDBAndServer = async () => {
 };
 initializeDBAndServer();
 
-// Get Books API
-app.get("/books/", async (request, response) => {
-  const getBooksQuery = `
-  SELECT
-    *
-  FROM
-    book
-  ORDER BY
-    book_id;`;
-  const booksArray = await db.all(getBooksQuery);
-  response.send(booksArray);
-});
-
-// API 2
-app.post("/users/", async (request, response) => {
-  const { name, username, password, gender, location } = request.body;
-  const hashedPassword = await bcrypt.hash(password, 40);
-  const userQuery = `
+app.post("/register", async (request, response) => {
+  const { username, name, password, gender, location } = request.body;
+  const hashedPassword = bcrypt.hash(password, 10);
+  const query = `
   select * from user 
-  where user username="${username}"`;
-  const dbuserresponse = await db.get(userQuery);
-  if (dbuserresponse === undefined) {
-    //create user in user table
-    const createUserQuery = `
-  INSERT INTO
-    user (username, name, password, gender, location)
-  VALUES
-    (
-      '${username}',
-      '${name}',
-      '${hashedPassword}',
-      '${gender}',
-      '${location}'  
-    );`;
+  where username="${username}";`;
+  const dbresponse = await db.get(query);
+  if (dbresponse === undefined) {
+    if (password.length < 5) {
+      response.status(400);
+      response.send("Password is too short");
+    } else {
+      const createQuery = `
+        insert into user(username,name,password,gender,location)
+        values ("${username}","${name}","${hashedPassword}","${gender}","${location}"); `;
+      const insertresponse = await db.run(createQuery);
+      response.send("User created successfully");
+    }
   } else {
-    //username name already taken
+    response.status(400);
+    response.send("User already exists");
   }
 });
+
+module.exports = app;
