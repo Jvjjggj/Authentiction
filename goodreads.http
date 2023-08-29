@@ -1,20 +1,57 @@
-POST http://localhost:3007/register
-Content-Type:application/json
+POST http://localhost:3011/register/
+Content-Type : application/json
 
 {
-  "username": "adam_richar",
-  "name": "Adam Richard",
+  "username": "adam_richard",
   "password": "richard_567",
-  "gender": "male",
-  "location": "Detroit"
+  "name": "Adam Richard",
+  "gender": "male"
 }
 
-### API 1
+### API 1 register
 
-POST http://localhost:3007/login
+POST http://localhost:3011/login/
 Content-Type: application/json
 
 {
-  "username": "adam_richar",
-  "password": "richard_567"
+  "username":"JoeBiden",
+  "password":"biden@123"
 }
+
+### API 2 login 
+
+
+GET http://localhost:3011/user/tweets/feed/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+### ApI 3 tweet
+
+GET http://localhost:3011/user/following/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+### API following
+
+GET http://localhost:3011/user/followers/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+### API followers
+
+GET http://localhost:3011/tweets/10/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+
+### API 6 
+
+GET http://localhost:3011/tweets/10/likes/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+### API 7
+
+GET http://localhost:3011/tweets/10/replies/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+
+### API 8 Narendra Modi
+
+GET http://localhost:3011/user/tweets/?user=Narendra%20Modi
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
