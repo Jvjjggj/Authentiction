@@ -27,6 +27,7 @@ connectDbToServer();
 // API 1 register
 app.post("/register/", async (request, response) => {
   const { username, password, name, gender } = request.body;
+  const encrypPassword = bcrypt.hash(password, 10);
   const query = `
   select * 
   from user
@@ -44,7 +45,7 @@ app.post("/register/", async (request, response) => {
       const query = `
           insert into 
              user (username,password,name,gender)
-          values("${username}","${password}","${name}","${gender}");`;
+          values("${username}","${encrypPassword}","${name}","${gender}");`;
 
       const dbresponse = await db.run(query);
       response.send("User created successfully");
@@ -108,7 +109,31 @@ const logger = (request, response, next) => {
   }
 };
 
-app.get("/user/tweets/feed/", logger, async (request, response) => {
+const logger1 = (request, response, next) => {
+  let jwtToken;
+  const authHeader = request.headers["authorization"];
+  if (authHeader === undefined) {
+    response.status(401);
+    response.send("Invalid JWT Token");
+  } else {
+    jwtToken = authHeader.split(" ")[1];
+    if (jwtToken === undefined) {
+      response.status(401);
+      response.send("Invalid JWT Token");
+    } else {
+      jwt.verify(jwtToken, "MY_KEY", async (error, user) => {
+        if (error) {
+          response.status(401);
+          response.send("Invalid JWT Token");
+        } else {
+          next();
+        }
+      });
+    }
+  }
+};
+
+app.get("/user/tweets/feed/", logger1, async (request, response) => {
   const query = `
   select
      username,tweet,date_time as dateTime
@@ -123,7 +148,7 @@ app.get("/user/tweets/feed/", logger, async (request, response) => {
 
 // API 3 all the peoples
 
-app.get("/user/following/", logger, async (request, response) => {
+app.get("/user/following/", logger1, async (request, response) => {
   const query = `
     select name
     from  user join follower on (user.user_id=follower.following_user_id);`;
@@ -133,7 +158,7 @@ app.get("/user/following/", logger, async (request, response) => {
 
 // API 4 followers
 
-app.get("/user/followers/", logger, async (request, response) => {
+app.get("/user/followers/", logger1, async (request, response) => {
   const query = `
     select 
        name
@@ -144,7 +169,7 @@ app.get("/user/followers/", logger, async (request, response) => {
 });
 
 // API 6 tweet with tweet Id
-app.get("/tweets/:tweetId/", logger, async (request, response) => {
+app.get("/tweets/:tweetId/", logger1, async (request, response) => {
   const { tweetId } = request.params;
   const query = `
   select * from 
@@ -157,7 +182,7 @@ app.get("/tweets/:tweetId/", logger, async (request, response) => {
 
 // API 7
 
-app.get("/tweets/:tweetId/likes/", logger, async (request, response) => {
+app.get("/tweets/:tweetId/likes/", logger1, async (request, response) => {
   const { tweetId } = request.params;
   const query = `
     select 
@@ -177,7 +202,7 @@ app.get("/tweets/:tweetId/likes/", logger, async (request, response) => {
 });
 
 // API 8
-app.get("/tweets/:tweetId/replies/", logger, async (request, response) => {
+app.get("/tweets/:tweetId/replies/", logger1, async (request, response) => {
   const { tweetId } = request.params;
   const query = `
     select name,reply from 
@@ -192,7 +217,7 @@ app.get("/tweets/:tweetId/replies/", logger, async (request, response) => {
 
 // API 9
 
-app.get("/user/tweets/", logger, async (request, response) => {
+app.get("/user/tweets/", logger1, async (request, response) => {
   const { user } = request.query;
   const query1 = `
     select tweet,count(like_id) as likes,
@@ -205,4 +230,25 @@ app.get("/user/tweets/", logger, async (request, response) => {
 
   response.send(dbresponse);
 });
+
+// API 10
+app.post("/user/tweets/", logger1, async (request, response) => {
+  const { Hi } = request.body;
+  response.send("Created a Tweet");
+});
+
+// API 11
+
+app.delete("/tweets/:tweetId/", logger1, async (request, response) => {
+  const { id } = request.params;
+  const query = `
+  delete from 
+     user
+  where 
+     user_id="${id}";`;
+  const dbresponse = await db.run(query);
+  response.send("Tweet Removed");
+});
+
 module.exports = app;
+
