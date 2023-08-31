@@ -55,3 +55,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJD
 
 GET http://localhost:3011/user/tweets/?user=Narendra%20Modi
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+### API 9 
+
+POST http://localhost:3011/user/tweets/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
+Content-Type: application/json
+
+{
+   "tweet": "The Mornings..."
+}
+
+### API 10
+
+DELETE http://localhost:3011/tweets/1/
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
+
