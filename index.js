@@ -14,8 +14,8 @@ const connectDbToServer = async () => {
       filename: dbpath,
       driver: sqlite3.Database,
     });
-    app.listen(3011, () => {
-      console.log(`Server is running 3011`);
+    app.listen(3020, () => {
+      console.log(`Server is running 3012`);
     });
   } catch (error) {
     console.log(error);
@@ -94,11 +94,36 @@ app.post("/login/", async (request, response) => {
   }
 });
 
-// API 3
+// API 3   !!!Important
 
 app.get("/user/tweets/feed/", authentication, async (request, response) => {
   const { payload } = request;
-  response.send(payload);
+  const { user_id, name, username, password, gender, iat } = payload;
+  //console.log(user_id);
+  const tweetQuery = `select 
+                       username,tweet,date_time as dateTime
+                    from 
+                       tweet inner join follower on (tweet.user_id=follower.following_user_id) inner join user on (user.user_id=follower.following_user_id)
+                    where 
+                       follower.follower_user_id=${user_id}`;
+  const tweetArray = await db.all(tweetQuery);
+  response.send(tweetArray);
+});
+
+// API 4
+
+app.get("/user/following/", authentication, async (request, response) => {
+  const { payload } = request;
+  const { user_id, name, username, password, gender, iat } = payload;
+  const query = `
+              select 
+                 name
+              from 
+                 user inner join follower on (user.user_id=follower.following_user_id)
+              where 
+                 follower.follower_user_id=${user_id}`;
+  const dbresponse = await db.all(query);
+  response.send(dbresponse);
 });
 
 module.exports = app;
