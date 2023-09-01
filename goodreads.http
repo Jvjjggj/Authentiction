@@ -1,4 +1,4 @@
-POST http://localhost:3011/register/
+POST http://localhost:3012/register/
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ### API 1
 
-POST http://localhost:3011/login/
+POST http://localhost:3012/login/
 Content-Type: application/json
 
 {
@@ -20,5 +20,10 @@ Content-Type: application/json
 
 ### API 2
 
-GET http://localhost:3011/user/tweets/feed/
+GET http://localhost:3012/user/tweets/feed/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJuYW1lIjoiSm9lIEJpZGVuIiwidXNlcm5hbWUiOiJKb2VCaWRlbiIsInBhc3N3b3JkIjoiJDJiJDEwJDJhcmU2QmE2OW9pL0NhaTRhVC9WTS50N0FPN1RzUXgvLk9nei43WEc0cWp1TWlsMHY4MGFxIiwiZ2VuZGVyIjoibWFsZSIsImlhdCI6MTY5MzU2ODQ4OH0.oshjkq7V-IocQJSoJ6ISvjhoUXS91BuSWCiDuTvWSgk
+
+### API 3
+
+GET http://localhost:3012/user/following/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJuYW1lIjoiSm9lIEJpZGVuIiwidXNlcm5hbWUiOiJKb2VCaWRlbiIsInBhc3N3b3JkIjoiJDJiJDEwJDJhcmU2QmE2OW9pL0NhaTRhVC9WTS50N0FPN1RzUXgvLk9nei43WEc0cWp1TWlsMHY4MGFxIiwiZ2VuZGVyIjoibWFsZSIsImlhdCI6MTY5MzU2ODQ4OH0.oshjkq7V-IocQJSoJ6ISvjhoUXS91BuSWCiDuTvWSgk
