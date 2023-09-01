@@ -24,231 +24,81 @@ const connectDbToServer = async () => {
 };
 connectDbToServer();
 
-// API 1 register
+const authentication = (request, response, next) => {
+  const { tweet } = request.body;
+  const { tweetId } = request.params;
+  let jwtToken;
+  const authHeader = request.headers["authorization"];
+  if (authHeader !== undefined) {
+    jwtToken = authHeader.split(" ")[1];
+  }
+  if (jwtToken === undefined) {
+    response.status(401);
+    response.send("Invalid JWT Token");
+  } else {
+    jwt.verify(jwtToken, "MY_KEY", async (error, payload) => {
+      if (error) {
+        response.send(401);
+        response.send("Invalid JWT Token");
+      } else {
+        request.payload = payload;
+        request.tweet = tweet;
+        request.tweetId = tweetId;
+        next();
+      }
+    });
+  }
+};
+
+// API 1
+
 app.post("/register/", async (request, response) => {
   const { username, password, name, gender } = request.body;
-  const encrypPassword = bcrypt.hash(password, 10);
-  const query = `
-  select * 
-  from user
-  where 
-     username="${username}";`;
-
-  const dbbresponse = await db.get(query);
-
-  if (dbbresponse === undefined) {
-    //new User
+  const query = `select * from user where username="${username}"`;
+  const dbuser = await db.get(query);
+  if (dbuser === undefined) {
     if (password.length < 6) {
       response.status(400);
       response.send("Password is too short");
     } else {
-      const query = `
-          insert into 
-             user (username,password,name,gender)
-          values("${username}","${encrypPassword}","${name}","${gender}");`;
-
-      const dbresponse = await db.run(query);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const createquery = `
+            insert into user (name,username,password,gender)
+            values ("${name}","${username}","${hashedPassword}","${gender}"; `;
+      await db.run(createquery);
+      response.status(200);
       response.send("User created successfully");
     }
-  } else {
-    response.status(400);
-    response.send("User already exists");
   }
 });
 
-// API 2 login
+// API 2
+
 app.post("/login/", async (request, response) => {
   const { username, password } = request.body;
-  const encryptPassword = await bcrypt.hash(password, 10);
   const query = `
-  select *
-  from 
-     user
-  where username="${username}";`;
-  const dbresponse = await db.get(query);
-  if (dbresponse === undefined) {
-    //user not found
+    select * from user where username="${username}"`;
+  const dbuser = await db.get(query);
+  if (dbuser === undefined) {
     response.status(400);
     response.send("Invalid user");
   } else {
-    const ispassword = await bcrypt.compare(password, dbresponse.password);
+    const ispassword = await bcrypt.compare(password, dbuser.password);
     if (ispassword) {
-      // correct password
-      const payload = username;
-      const jwtToken = await jwt.sign(payload, "MY_KEY");
+      const jwtToken = jwt.sign(dbuser, "MY_KEY");
       response.send({ jwtToken });
     } else {
-      // false password
       response.status(400);
-      response.send("Invalid password");
+      response.send("Invaid password");
     }
   }
 });
 
-const logger = (request, response, next) => {
-  let jwtToken;
-  const authHeader = request.headers["authorization"];
-  if (authHeader === undefined) {
-    response.status(400);
-    response.send("Invalid JWT Token");
-  } else {
-    jwtToken = authHeader.split(" ")[1];
-    if (jwtToken === undefined) {
-      response.status(400);
-      response.send("Invalid JWT Token");
-    } else {
-      jwt.verify(jwtToken, "MY_KEY", async (error, user) => {
-        if (error) {
-          response.status(400);
-          response.send("Invalid JWT Token");
-        } else {
-          next();
-        }
-      });
-    }
-  }
-};
+// API 3
 
-const logger1 = (request, response, next) => {
-  let jwtToken;
-  const authHeader = request.headers["authorization"];
-  if (authHeader === undefined) {
-    response.status(401);
-    response.send("Invalid JWT Token");
-  } else {
-    jwtToken = authHeader.split(" ")[1];
-    if (jwtToken === undefined) {
-      response.status(401);
-      response.send("Invalid JWT Token");
-    } else {
-      jwt.verify(jwtToken, "MY_KEY", async (error, user) => {
-        if (error) {
-          response.status(401);
-          response.send("Invalid JWT Token");
-        } else {
-          next();
-        }
-      });
-    }
-  }
-};
-
-app.get("/user/tweets/feed/", logger1, async (request, response) => {
-  const query = `
-  select
-     username,tweet,date_time as dateTime
-  from 
-     user inner join tweet on (user.user_id=tweet.user_id)
-  order by
-     date_time asc
-  limit 4;`;
-  const dbresponse = await db.all(query);
-  response.send(dbresponse);
-});
-
-// API 3 all the peoples
-
-app.get("/user/following/", logger1, async (request, response) => {
-  const query = `
-    select name
-    from  user join follower on (user.user_id=follower.following_user_id);`;
-  const dbresponse = await db.all(query);
-  response.send(dbresponse);
-});
-
-// API 4 followers
-
-app.get("/user/followers/", logger1, async (request, response) => {
-  const query = `
-    select 
-       name
-    from 
-       user join follower on (user.user_id=follower.follower_id);`;
-  const dbresponse = await db.all(query);
-  response.send(dbresponse);
-});
-
-// API 6 tweet with tweet Id
-app.get("/tweets/:tweetId/", logger1, async (request, response) => {
-  const { tweetId } = request.params;
-  const query = `
-  select * from 
-      tweet 
-  where 
-     tweet_id=${tweetId};`;
-  const dbresponse = await db.all(query);
-  response.send(dbresponse);
-});
-
-// API 7
-
-app.get("/tweets/:tweetId/likes/", logger1, async (request, response) => {
-  const { tweetId } = request.params;
-  const query = `
-    select 
-      *
-    from 
-      like join user on (like.user_id=user.user_id)
-    where 
-       tweet_id=${tweetId};`;
-  const dbresponse = await db.all(query);
-  let lst = [];
-  for (let i of dbresponse) {
-    lst.push(i.name);
-  }
-  response.send({
-    likes: lst,
-  });
-});
-
-// API 8
-app.get("/tweets/:tweetId/replies/", logger1, async (request, response) => {
-  const { tweetId } = request.params;
-  const query = `
-    select name,reply from 
-    user join reply on (user.user_id=reply.user_id)
-    where 
-       tweet_id=${tweetId};`;
-  const dbresponse = await db.all(query);
-  response.send({
-    replies: dbresponse,
-  });
-});
-
-// API 9
-
-app.get("/user/tweets/", logger1, async (request, response) => {
-  const { user } = request.query;
-  const query1 = `
-    select tweet,count(like_id) as likes,
-    count(reply_id) as replies,date_time as dateTime
-    from 
-       like join tweet join user join reply on (reply.user_id=like.user_id=tweet.user_id=user.user_id)
-    where 
-       name="${user}";`;
-  const dbresponse = await db.all(query1);
-
-  response.send(dbresponse);
-});
-
-// API 10
-app.post("/user/tweets/", logger1, async (request, response) => {
-  const { Hi } = request.body;
-  response.send("Created a Tweet");
-});
-
-// API 11
-
-app.delete("/tweets/:tweetId/", logger1, async (request, response) => {
-  const { id } = request.params;
-  const query = `
-  delete from 
-     user
-  where 
-     user_id="${id}";`;
-  const dbresponse = await db.run(query);
-  response.send("Tweet Removed");
+app.get("/user/tweets/feed/", authentication, async (request, response) => {
+  const { payload } = request;
+  response.send(payload);
 });
 
 module.exports = app;
-
