@@ -1,5 +1,5 @@
 POST http://localhost:3011/register/
-Content-Type : application/json
+Content-Type: application/json
 
 {
   "username": "adam_richard",
@@ -8,7 +8,7 @@ Content-Type : application/json
   "gender": "male"
 }
 
-### API 1 register
+### API 1
 
 POST http://localhost:3011/login/
 Content-Type: application/json
@@ -18,57 +18,7 @@ Content-Type: application/json
   "password":"biden@123"
 }
 
-### API 2 login 
-
+### API 2
 
 GET http://localhost:3011/user/tweets/feed/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-### ApI 3 tweet
-
-GET http://localhost:3011/user/following/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-### API following
-
-GET http://localhost:3011/user/followers/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-### API followers
-
-GET http://localhost:3011/tweets/10/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-
-### API 6 
-
-GET http://localhost:3011/tweets/10/likes/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-### API 7
-
-GET http://localhost:3011/tweets/10/replies/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-
-### API 8 Narendra Modi
-
-GET http://localhost:3011/user/tweets/?user=Narendra%20Modi
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-### API 9 
-
-POST http://localhost:3011/user/tweets/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
-Content-Type: application/json
-
-{
-   "tweet": "The Mornings..."
-}
-
-### API 10
-
-DELETE http://localhost:3011/tweets/1/
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.Sm9lQmlkZW4.NoyLj7DAO98bkqm-VU_lWFzJDHo2FXETEap4ZeWk_g4
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJuYW1lIjoiSm9lIEJpZGVuIiwidXNlcm5hbWUiOiJKb2VCaWRlbiIsInBhc3N3b3JkIjoiJDJiJDEwJDJhcmU2QmE2OW9pL0NhaTRhVC9WTS50N0FPN1RzUXgvLk9nei43WEc0cWp1TWlsMHY4MGFxIiwiZ2VuZGVyIjoibWFsZSIsImlhdCI6MTY5MzU2ODQ4OH0.oshjkq7V-IocQJSoJ6ISvjhoUXS91BuSWCiDuTvWSgk
